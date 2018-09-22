@@ -16,7 +16,6 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Map onLocationChange={this.handleLocationChange} />
         <Camera onPictureTake={this.handlePictureTake} />
       </View>
     )

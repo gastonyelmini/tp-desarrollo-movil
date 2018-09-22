@@ -2,12 +2,14 @@ import React, { Component } from 'react'
 import { Text, View, TouchableOpacity, StyleSheet, Button, CameraRoll, Image } from 'react-native'
 import { Camera, Permissions } from 'expo'
 import { Constants, takePictureAsync } from 'expo'
+import { Ionicons } from '@expo/vector-icons'
 
 export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
-    takenPhotoUri: null,
+    // takenPhotoUri: null,
+    takenPhotoUri: 'https://facebook.github.io/react-native/docs/assets/favicon.png',
   }
 
   async componentWillMount() {
@@ -28,7 +30,7 @@ export default class CameraExample extends React.Component {
           ref={view => {
             this._container = view
           }}
-          style={StyleSheet.absoluteFill}
+          style={[StyleSheet.absoluteFill, styles.mainFrame]}
         >
           <Camera
             style={{ flex: 1 }}
@@ -45,34 +47,32 @@ export default class CameraExample extends React.Component {
               }}
             >
               {this.state.takenPhotoUri && (
-                <Image
-                  source={{ uri: this.state.takenPhotoUri }}
-                  style={{ width: 200, height: 200, backgroundColor: 'black' }}
-                />
+                <Image source={{ uri: this.state.takenPhotoUri }} style={styles.imagePreview} />
               )}
+
               <TouchableOpacity
                 style={{
                   flex: 1,
+                  flexDirection: 'row',
                   alignSelf: 'flex-end',
                   alignItems: 'center',
-                }}
-                onPress={() => {
-                  this.setState({
-                    type:
-                      this.state.type === Camera.Constants.Type.back
-                        ? Camera.Constants.Type.front
-                        : Camera.Constants.Type.back,
-                  })
+                  justifyContent: 'center',
                 }}
               >
-                <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flip </Text>
-
-                <Button
-                  style={{ flex: 1, marginBottom: 50, color: 'white' }}
-                  onPress={this.takePhoto}
-                  title="Sacar foto"
-                  color="#841584"
+                <Ionicons
+                  style={styles.actionButton}
+                  name="md-refresh-circle"
+                  size={32}
+                  onPress={() => {
+                    this.setState({
+                      type:
+                        this.state.type === Camera.Constants.Type.back
+                          ? Camera.Constants.Type.front
+                          : Camera.Constants.Type.back,
+                    })
+                  }}
                 />
+                <Ionicons style={styles.actionButton} name="md-camera" size={32} onPress={this.takePhoto} />
               </TouchableOpacity>
             </View>
           </Camera>
@@ -84,11 +84,26 @@ export default class CameraExample extends React.Component {
   takePhoto = async () => {
     if (this.camera) {
       let photo = await this.camera.takePictureAsync()
-      //   console.warn(photo.uri)
-      alert('Cargando...')
-      await CameraRoll.saveToCameraRoll(photo.uri, 'photo')
+      //   await CameraRoll.saveToCameraRoll(photo.uri, 'photo')
       this.setState({ takenPhotoUri: photo.uri })
       //   console.warn('fjtfthg', this.state.takenPhotoUri)
     }
   }
 }
+
+const styles = StyleSheet.create({
+  actionButton: {
+    padding: 10,
+    fontSize: 50,
+    color: '#fff',
+  },
+  imagePreview: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    backgroundColor: 'black',
+  },
+  mainFrame: {
+    paddingTop: 20,
+  },
+})
